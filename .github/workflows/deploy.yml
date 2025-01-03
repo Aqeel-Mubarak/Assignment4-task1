@@ -22,21 +22,15 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Set up Git LFS and Authentication
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      - name: Generate iris_model.pkl
         run: |
-          git lfs install
-          git config --global credential.helper store
-          echo "https://${{ secrets.HF_TOKEN }}@huggingface.co" > ~/.git-credentials
+          python model.py
 
-      - name: Clone Hugging Face Space with LFS Authentication
+      - name: Clone Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git clone https://${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
-          cd hf-space
-          git lfs pull
 
       - name: Copy files to Hugging Face Space directory
         run: |
