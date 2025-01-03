@@ -6,35 +6,27 @@ on:
       - main  # Run only when changes are pushed to the 'main' branch
 
 jobs:
-  deploy:  # A single job named 'deploy'
-    runs-on: windows-latest  # Use a Windows machine as the runner
+  deploy:
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code  # Step 1: Get the code from the repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python  # Step 2: Install Python on the runner
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # Specify the Python version
+          python-version: '3.9'
 
-      - name: Install dependencies  # Step 3: Install Python dependencies
+      - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
-      - name: Clone Hugging Face Space  # Step 4: Clone the Hugging Face Space repository
+      - name: Clone Hugging Face Space
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
-          cd hf-space
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1
-          git config --global credential.helper store
-          echo "https://huggingface.co:${{ secrets.HF_TOKEN }}" > ~/.git-credentials
-          git pull origin main
-          cd ..
 
       - name: Copy files to Hugging Face Space directory
         run: |
@@ -42,13 +34,18 @@ jobs:
             Copy-Item -Path $_.FullName -Destination hf-space -Recurse -Force
           }
 
-      - name: Commit and Push Changes  # Step 5: Commit and push changes
+      - name: Commit and Push Changes
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd hf-space
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://huggingface.co/${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1
           git add .
-          git commit -m "Auto-deploy to Hugging Face Space"
+          git commit -m "Auto-deploy to Hugging Face Space" || echo "No changes to commit"
           git push origin main
 
-      - name: Clean up workspace  # Step 6: Clean up the temporary directory
+      - name: Clean up workspace
         run: |
           Remove-Item -Recurse -Force hf-space
