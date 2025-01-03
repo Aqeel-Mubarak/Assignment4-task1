@@ -26,4 +26,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
         run: |
-          huggingface-cli repo upload . --repo spaces/YourUsername/YourRepoName --commit-message "Auto-deploy"
+          huggingface-cli repo upload . --repo spaces/aqeelmubarak2003/Assignment4-task1 --commit-message "Auto-deploy"
