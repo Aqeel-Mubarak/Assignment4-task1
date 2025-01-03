@@ -27,7 +27,9 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
         run: |
           git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
-          Copy-Item -Path * -Destination hf-space -Recurse -Force
+          Get-ChildItem -Path . -Exclude hf-space | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination hf-space -Recurse -Force
+          }
           cd hf-space
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
