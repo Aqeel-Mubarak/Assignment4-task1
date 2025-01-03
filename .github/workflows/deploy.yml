@@ -22,6 +22,12 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Set up Git LFS
+        run: |
+          git lfs install
+          git config --global credential.helper store
+          echo "https://${{ secrets.HF_TOKEN }}@huggingface.co" > ~/.git-credentials
+
       - name: Clone Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
