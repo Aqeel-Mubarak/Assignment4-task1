@@ -1,0 +1,29 @@
+name: Deploy to Hugging Face Spaces  Assignment4-task1
+
+on:
+  push:  # Trigger this workflow on push events
+    branches:
+      - main  # Run only when changes are pushed to the 'main' branch
+
+jobs:
+  deploy:  # A single job named 'deploy'
+    runs-on: ubuntu-latest  # Use a Linux machine as the runner
+
+    steps:
+      - name: Checkout code  # Step 1: Get the code from the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python  # Step 2: Install Python on the runner
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Specify the Python version
+
+      - name: Install dependencies  # Step 3: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Deploy to Hugging Face Spaces  # Step 4: Upload project to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
+        run: |
+          huggingface-cli repo upload . --repo spaces/YourUsername/YourRepoName --commit-message "Auto-deploy"
