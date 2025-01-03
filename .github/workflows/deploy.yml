@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face Spaces  Assignment4-task1
+name: Deploy to Hugging Face Spaces - Assignment4-task1
 
 on:
   push:  # Trigger this workflow on push events
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:  # A single job named 'deploy'
-    runs-on: ubuntu-latest  # Use a Linux machine as the runner
+    runs-on: windows-latest  # Use a Windows machine as the runner
 
     steps:
       - name: Checkout code  # Step 1: Get the code from the repository
@@ -22,8 +22,19 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Deploy to Hugging Face Spaces  # Step 4: Upload project to Hugging Face Spaces
+      - name: Clone Hugging Face Space  # Step 4: Clone the Hugging Face Space repository
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
         run: |
-          huggingface-cli repo upload . --repo spaces/aqeelmubarak2003/Assignment4-task1 --commit-message "Auto-deploy"
+          git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
+          copy * hf-space /Y
+          cd hf-space
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-deploy to Hugging Face Space"
+          git push
+
+      - name: Clean up workspace  # Step 5: Clean up the temporary directory
+        run: |
+          rd /s /q hf-space
