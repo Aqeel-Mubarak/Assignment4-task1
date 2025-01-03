@@ -27,7 +27,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Use the Hugging Face token stored in GitHub Secrets
         run: |
           git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
-          copy * hf-space /Y
+          Copy-Item -Path * -Destination hf-space -Recurse -Force
           cd hf-space
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -37,4 +37,4 @@ jobs:
 
       - name: Clean up workspace  # Step 5: Clean up the temporary directory
         run: |
-          rd /s /q hf-space
+          Remove-Item -Recurse -Force hf-space
