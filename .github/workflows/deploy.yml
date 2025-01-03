@@ -25,3 +25,14 @@ jobs:
     - name: Push changes to Hugging Face Space
       run: |
         huggingface-cli repo push ${{ secrets.HF_SPACE }} --repo-id aqeelmubarak2003/Assignment4-task1 --commit-message "Auto Deployment"
+
+    - name: Push changes to Hugging Face Space
+      run: |
+        git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 space
+        rsync -av --exclude='.git' ./ space/
+        cd space
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Auto Deployment"
+        git push
