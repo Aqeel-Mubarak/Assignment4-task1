@@ -26,7 +26,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git clone https://huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
+          git clone https://${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
 
       - name: Copy files to Hugging Face Space directory
         run: |
@@ -35,13 +35,10 @@ jobs:
           }
 
       - name: Commit and Push Changes
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd hf-space
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://huggingface.co/${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1
           git add .
           git commit -m "Auto-deploy to Hugging Face Space" || echo "No changes to commit"
           git push origin main
