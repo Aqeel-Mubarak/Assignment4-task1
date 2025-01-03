@@ -1,52 +1,27 @@
-name: Deploy to Hugging Face Spaces - Assignment4-task1
+name: Deploy to Hugging Face Space
 
 on:
   push:
     branches:
-      - main
+      - main  # Deploy changes when pushing to the main branch
 
 jobs:
   deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - name: Install Hugging Face CLI
+      run: pip install huggingface_hub
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: pip install -r requirements.txt
 
-      - name: Generate iris_model.pkl
-        run: |
-          python model.py
+    - name: Authenticate with Hugging Face
+      run: huggingface-cli login --token ${{ secrets.HF_TOKEN }}
 
-      - name: Clone Hugging Face Space
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          git clone https://${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
-
-      - name: Copy files to Hugging Face Space directory
-        run: |
-          Get-ChildItem -Path . -Exclude hf-space | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination hf-space -Recurse -Force
-          }
-
-      - name: Commit and Push Changes
-        run: |
-          cd hf-space
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Auto-deploy to Hugging Face Space" || echo "No changes to commit"
-          git push origin main
-
-      - name: Clean up workspace
-        run: |
-          Remove-Item -Recurse -Force hf-space
+    - name: Push changes to Hugging Face Space
+      run: |
+        huggingface-cli repo push ${{ secrets.HF_SPACE }} --repo-id aqeelmubarak2003/Assignment4-task1 --commit-message "Auto Deployment"
