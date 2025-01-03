@@ -1,9 +1,9 @@
 name: Deploy to Hugging Face Spaces - Assignment4-task1
 
 on:
-  push:  # Trigger this workflow on push events
+  push:
     branches:
-      - main  # Run only when changes are pushed to the 'main' branch
+      - main
 
 jobs:
   deploy:
@@ -22,17 +22,21 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Set up Git LFS
+      - name: Set up Git LFS and Authentication
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git lfs install
           git config --global credential.helper store
           echo "https://${{ secrets.HF_TOKEN }}@huggingface.co" > ~/.git-credentials
 
-      - name: Clone Hugging Face Space
+      - name: Clone Hugging Face Space with LFS Authentication
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git clone https://${{ secrets.HF_TOKEN }}@huggingface.co/spaces/aqeelmubarak2003/Assignment4-task1 hf-space
+          cd hf-space
+          git lfs pull
 
       - name: Copy files to Hugging Face Space directory
         run: |
